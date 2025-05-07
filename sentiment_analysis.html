@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Sentiment Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            width: 100%;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .result-section.show {
+            display: block;
+        }
+        .sentiment-positive {
+            color: green;
+        }
+        .sentiment-negative {
+            color: red;
+        }
+        .sentiment-neutral {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Social Media Sentiment Analysis</h1>
+    </header>
+    <div class="container">
+        <div class="input-section">
+            <h2>Analyze Sentiment</h2>
+            <textarea id="postInput" placeholder="Enter social media post..."></textarea>
+            <button onclick="analyzeSentiment()">Analyze</button>
+        </div>
+        <div id="resultSection" class="result-section">
+            <h2>Result</h2>
+            <p id="sentimentResult"></p>
+            <p id="confidenceScore"></p>
+        </div>
+    </div>
+
+    <script>
+        function analyzeSentiment() {
+            const postText = document.getElementById('postInput').value.trim();
+            const resultSection = document.getElementById('resultSection');
+            const sentimentResult = document.getElementById('sentimentResult');
+            const confidenceScore = document.getElementById('confidenceScore');
+
+            if (!postText) {
+                alert('Please enter a social media post.');
+                return;
+            }
+
+            const positiveWords = ['great', 'awesome', 'love', 'happy', 'good', 'excellent'];
+            const negativeWords = ['bad', 'terrible', 'hate', 'sad', 'awful', 'worst'];
+            let score = 0;
+            const words = postText.toLowerCase().split(/\s+/);
+
+            words.forEach(word => {
+                if (positiveWords.includes(word)) {
+                    score += 1;
+                } else if (negativeWords.includes(word)) {
+                    score -= 1;
+                }
+            });
+
+            let sentiment = 'Neutral';
+            let sentimentClass = 'sentiment-neutral';
+            let confidence = 0;
+
+            if (score > 0) {
+                sentiment = 'Positive';
+                sentimentClass = 'sentiment-positive';
+                confidence = Math.min(score / 5, 1) * 100;
+            } else if (score < 0) {
+                sentiment = 'Negative';
+                sentimentClass = 'sentiment-negative';
+                confidence = Math.min(Math.abs(score) / 5, 1) * 100;
+            } else {
+                confidence = 100;
+            }
+
+            sentimentResult.innerHTML = `Sentiment: <span class="${sentimentClass}">${sentiment}</span>`;
+            confidenceScore.textContent = `Confidence: ${confidence.toFixed(2)}%`;
+
+            resultSection.classList.add('show');
+        }
+    </script>
+</body>
+</html>
